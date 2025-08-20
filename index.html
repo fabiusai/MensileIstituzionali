@@ -262,18 +262,24 @@
     function formatNumber(num) {
         const numericValue = Number(num);
         if (isNaN(numericValue)) return num;
+
+        // Milioni (M): mantiene i decimali
         if (numericValue >= 1000000) {
             let formatted = (numericValue / 1000000).toFixed(2);
-            if (formatted.endsWith('.00')) return (numericValue / 1000000).toFixed(0) + 'M';
-            if (formatted.slice(-1) === '0') return (numericValue / 1000000).toFixed(1) + 'M';
+            if (formatted.endsWith('.00')) {
+                formatted = (numericValue / 1000000).toFixed(0);
+            } else if (formatted.slice(-1) === '0') {
+                formatted = (numericValue / 1000000).toFixed(1);
+            }
             return formatted.replace('.', ',') + 'M';
         }
+        
+        // Migliaia (K): arrotonda all'intero, senza decimali
         if (numericValue >= 1000) {
-            let formatted = (numericValue / 1000).toFixed(2);
-            if (formatted.endsWith('.00')) return (numericValue / 1000).toFixed(0) + 'K';
-            if (formatted.slice(-1) === '0') return (numericValue / 1000).toFixed(1) + 'K';
-            return formatted.replace('.', ',') + 'K';
+            return Math.round(numericValue / 1000).toString() + 'K';
         }
+
+        // Sotto 1000: nessun cambiamento
         return numericValue.toString();
     }
 
@@ -441,7 +447,7 @@
                 cellText.setAttribute('fill', '#000');
                 cellText.setAttribute('text-anchor', 'middle');
                 
-                const yCorrection = 10; // Correzione verticale finale
+                const yCorrection = 10;
 
                 if (i === 0) {
                     const text = String(cell);
